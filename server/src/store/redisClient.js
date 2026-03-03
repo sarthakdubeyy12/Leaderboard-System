@@ -1,5 +1,5 @@
 /* 
-Redis connection helper. Exports client and connectRedis().
+redis connection helper. Exports client and connectRedis().
 */
 
 const { createClient } = require("redis");

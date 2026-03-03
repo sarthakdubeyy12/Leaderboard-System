@@ -1,5 +1,5 @@
 /* 
-Server entry point; starts the app after connecting to Redis.
+server entry point starts the app after connecting to Redis.
 */
 
 const app = require("./app");
