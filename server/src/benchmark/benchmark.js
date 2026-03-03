@@ -1,5 +1,5 @@
 /**
- * from this benchmarch file we can test the 10k updates to the leaderboard and also we can see the performance of the leaderboard
+ * from this benchmark file we can test 10k updates to the leaderboard and gauge performance
  */
 
 const axios = require("axios");

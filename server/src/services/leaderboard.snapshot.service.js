@@ -19,11 +19,13 @@ class SnapshotService {
       -1
     );
 
-    // recreate the same sorted set under a new timestamped key.
-    for (const player of allPlayers) {
-      await redisClient.zAdd(snapshotKey, [
-        { score: player.score, value: player.value }
-      ]);
+    // recreate the same sorted set under a new timestamped key using pipeline
+    if (allPlayers.length > 0) {
+      const pipeline = redisClient.multi();
+      for (const player of allPlayers) {
+        pipeline.zAdd(snapshotKey, { score: player.score, value: player.value });
+      }
+      await pipeline.exec();
     }
 
     return timestamp;

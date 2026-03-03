@@ -25,7 +25,10 @@ router.post("/update", validateUpdate, async (req, res, next) => {
 // fetch top K players.
 router.get("/top", async (req, res, next) => {
   try {
-    const k = parseInt(req.query.k) || 10;
+    const k = req.query.k !== undefined ? parseInt(req.query.k, 10) : 10;
+    if (!Number.isInteger(k) || k <= 0) {
+      return res.status(400).json({ error: "Invalid value for k" });
+    }
     const topPlayers = await leaderboardService.getTopK(k);
     res.json(topPlayers);
   } catch (err) {
@@ -39,6 +42,9 @@ router.get("/top", async (req, res, next) => {
 router.get("/rank/:userId", async (req, res, next) => {
   try {
     const rank = await leaderboardService.getRank(req.params.userId);
+    if (rank === null) {
+      return res.status(404).json({ error: "User not found on leaderboard" });
+    }
     res.json({ rank });
   } catch (err) {
     next(err);
@@ -49,10 +55,10 @@ router.get("/rank/:userId", async (req, res, next) => {
 // get players within a rank range (inclusive).
 router.get("/range", async (req, res, next) => {
   try {
-    const start = parseInt(req.query.start);
-    const end = parseInt(req.query.end);
+    const start = parseInt(req.query.start, 10);
+    const end = parseInt(req.query.end, 10);
 
-    if (!start || !end || start < 1 || end < start) {
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 1 || end < start) {
       return res.status(400).json({ error: "Invalid range" });
     }
     const players = await leaderboardService.getPlayersInRange(start, end);
@@ -77,9 +83,9 @@ router.post("/snapshot", async (req, res, next) => {
 // fetch top-k results from a specific snapshot timestamp.
 router.get("/top-at", async (req, res, next) => {
   try {
-    const k = parseInt(req.query.k);
-    const timestamp = parseInt(req.query.timestamp);
-    if (!k || !timestamp) {
+    const k = parseInt(req.query.k, 10);
+    const timestamp = parseInt(req.query.timestamp, 10);
+    if (!Number.isInteger(k) || k <= 0 || !Number.isInteger(timestamp) || timestamp <= 0) {
       return res.status(400).json({ error: "Invalid k or timestamp" });
     }
     const result = await snapshotService.getTopKAt(k, timestamp);

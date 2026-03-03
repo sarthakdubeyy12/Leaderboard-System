@@ -1,12 +1,12 @@
 /* 
-redis connection establich file from this file we can see redis is connected
-or not and also we can export the redis client to use in other files
+Redis connection helper. Exports client and connectRedis().
 */
 
 const { createClient } = require("redis");
 
+const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 const redisClient = createClient({
-  url: "redis://localhost:6379",
+  url: REDIS_URL,
 });
 
 redisClient.on("error", (err) => {
@@ -15,8 +15,15 @@ redisClient.on("error", (err) => {
 
 async function connectRedis() {
   if (!redisClient.isOpen) {
-    await redisClient.connect();
-    console.log("✅ Connected to Redis");
+    try {
+      await redisClient.connect();
+      console.log("✅ Connected to Redis");
+    } catch (err) {
+      console.error("Failed to connect to Redis", err);
+      await new Promise((r) => setTimeout(r, 1000));
+      await redisClient.connect();
+      console.log("✅ Connected to Redis on retry");
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 /* 
-centralised file for express app, we can add all the middlewares and routes here
+Centralized file for express app. Add middlewares and routes here.
 */
 
 const express = require("express");

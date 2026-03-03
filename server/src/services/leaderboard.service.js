@@ -78,7 +78,7 @@ class LeaderboardService {
     // zRevRank returns 0-based rank in descending order.
     const rank = await redisClient.zRevRank(LEADERBOARD_KEY, userId);
 
-    if (rank === null) return -1;
+    if (rank === null) return null;
 
     return rank + 1;
   }
